@@ -213,6 +213,8 @@ input ConfigInterfaceInput {
   
   """Maximum duration (in seconds) in which a scene video will loop in the scene player"""
   maximumLoopDuration: Int
+  """If true, and HTTPS is enabled, will show a deovr link in the scene player."""
+  showSceneDeoVRButton: Boolean
   """If true, video will autostart on load in the scene player"""
   autostartVideo: Boolean
   """If true, video will autostart when loading from play random or play selected"""
@@ -273,6 +275,8 @@ type ConfigInterfaceResult {
   noBrowser: Boolean
   """True if we should send desktop notifications"""
   notificationsEnabled: Boolean
+  """If true, and HTTPS is enabled, will show a deovr link in the scene player."""
+  showSceneDeoVRButton: Boolean
   """If true, video will autostart on load in the scene player"""
   autostartVideo: Boolean
   """If true, video will autostart when loading from play random or play selected"""

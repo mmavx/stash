@@ -40,6 +40,7 @@ func (rs sceneRoutes) Routes() chi.Router {
 		r.Get("/funscript", rs.Funscript)
 		r.Get("/interactive_heatmap", rs.InteractiveHeatmap)
 
+		r.Get("/deovr.json", rs.DeoVRJSON)
 		r.Get("/scene_marker/{sceneMarkerId}/stream", rs.SceneMarkerStream)
 		r.Get("/scene_marker/{sceneMarkerId}/preview", rs.SceneMarkerPreview)
 		r.Get("/scene_marker/{sceneMarkerId}/screenshot", rs.SceneMarkerScreenshot)
@@ -187,6 +188,15 @@ func (rs sceneRoutes) streamTranscode(w http.ResponseWriter, r *http.Request, vi
 	}
 
 	stream.Serve(w, r)
+}
+
+func (rs sceneRoutes) DeoVRJSON(w http.ResponseWriter, r *http.Request) {
+	scene := r.Context().Value(sceneKey).(*models.Scene)
+	w.Header().Set("Content-Type", "application/json")
+	_, err := w.Write(getSingleSceneJSON(r.Context(), scene))
+	if err != nil {
+		logger.Warnf("Error writing single scene deovr json response: %s", err.Error())
+	}
 }
 
 func (rs sceneRoutes) Screenshot(w http.ResponseWriter, r *http.Request) {

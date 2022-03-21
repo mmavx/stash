@@ -2,6 +2,7 @@ package urlbuilders
 
 import (
 	"fmt"
+	"net/url"
 	"strconv"
 	"time"
 )
@@ -65,6 +66,17 @@ func (b SceneURLBuilder) GetSceneMarkerStreamScreenshotURL(sceneMarkerID int) st
 
 func (b SceneURLBuilder) GetFunscriptURL() string {
 	return b.BaseURL + "/scene/" + b.SceneID + "/funscript"
+}
+
+func (b SceneURLBuilder) GetDeoVRURL(useDeoVRProto bool) string {
+	addr, err := url.Parse(b.BaseURL + "/scene/" + b.SceneID + "/deovr.json")
+	if err != nil {
+		return ""
+	}
+	if useDeoVRProto {
+		addr.Scheme = "deovr"
+	}
+	return addr.String()
 }
 
 func (b SceneURLBuilder) GetInteractiveHeatmapURL() string {

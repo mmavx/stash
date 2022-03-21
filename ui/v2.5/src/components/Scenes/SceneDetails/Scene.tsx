@@ -40,6 +40,7 @@ import { GenerateDialog } from "../../Dialogs/GenerateDialog";
 import { SceneVideoFilterPanel } from "./SceneVideoFilterPanel";
 import { OrganizedButton } from "./OrganizedButton";
 import { ConfigurationContext } from "src/hooks/Config";
+import { VRButton } from "./VRButton";
 
 interface IProps {
   scene: GQL.SceneDataFragment;
@@ -472,6 +473,9 @@ const ScenePage: React.FC<IProps> = ({ scene, refetch }) => {
           <ButtonGroup className="ml-auto">
             <Nav.Item className="ml-auto">
               <ExternalPlayerButton scene={scene} />
+            </Nav.Item>
+            <Nav.Item className="ml-auto">
+              <VRButton scene={scene} />
             </Nav.Item>
             <Nav.Item className="ml-auto">
               <OCounterButton

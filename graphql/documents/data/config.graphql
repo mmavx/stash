@@ -55,6 +55,7 @@ fragment ConfigInterfaceData on ConfigInterfaceResult {
   maximumLoopDuration
   noBrowser
   notificationsEnabled
+  showSceneDeoVRButton
   autostartVideo
   autostartVideoOnPlaySelected
   continuePlaylistDefault

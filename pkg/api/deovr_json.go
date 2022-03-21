@@ -3,12 +3,14 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"github.com/stashapp/stash/pkg/api/urlbuilders"
 	"github.com/stashapp/stash/pkg/logger"
 	"github.com/stashapp/stash/pkg/manager"
 	"github.com/stashapp/stash/pkg/models"
 	"github.com/stashapp/stash/pkg/scene"
+	"github.com/stashapp/stash/pkg/tag"
 )
 
 type MultipleVideoJsonResponse struct {
@@ -28,6 +30,11 @@ type SlimDeoScene struct {
 	VideoPreview string `json:"videoPreview,omitempty"`
 }
 
+type DeoFleshlight struct {
+	Title string `json:"title"`
+	URL   string `json:"url"`
+}
+
 type FullDeoScene struct {
 	Encodings    []DeoSceneEncoding `json:"encodings"`
 	Title        string             `json:"title"`
@@ -38,6 +45,8 @@ type FullDeoScene struct {
 	StereoMode   string             `json:"stereoMode,omitempty"`
 	VideoPreview string             `json:"videoPreview,omitempty"`
 	ThumbnailURL string             `json:"thumbnailUrl"`
+	IsScripted   bool               `json:"isScripted"`
+	Fleshlight   []DeoFleshlight    `json:"fleshlight"`
 }
 
 type DeoSceneEncoding struct {
@@ -54,9 +63,23 @@ func getEverySceneJSON(ctx context.Context) []byte {
 	var err error
 	txnManager := manager.GetInstance().TxnManager
 	var scenes []*models.Scene
+	var vrTag *models.Tag
 	err = txnManager.WithReadTxn(context.TODO(), func(r models.ReaderRepository) error {
 		pageSize := -1
-		scenes, err = scene.Query(r.Scene(), &models.SceneFilterType{}, &models.FindFilterType{
+
+		x := &models.HierarchicalMultiCriterionInput{}
+		vrTag, err = tag.ByName(r.Tag(), "VR")
+		if err != nil {
+			logger.Warnf("Could not retrieve VR tag: %s", err.Error())
+		} else {
+			x = &models.HierarchicalMultiCriterionInput{
+				Value:    []string{strconv.Itoa(vrTag.ID)},
+				Modifier: models.CriterionModifierIncludes,
+			}
+		}
+		scenes, err = scene.Query(r.Scene(), &models.SceneFilterType{
+			Tags: x,
+		}, &models.FindFilterType{
 			PerPage: &pageSize,
 		})
 		if err != nil {
@@ -74,13 +97,14 @@ func getEverySceneJSON(ctx context.Context) []byte {
 	for _, sceneModel := range scenes {
 		builder := urlbuilders.NewSceneURLBuilder(baseURL, sceneModel.ID)
 
-		list = append(list, SlimDeoScene{
+		x := SlimDeoScene{
 			Title:        sceneModel.GetTitle(),
 			VideoLength:  uint(sceneModel.Duration.Float64),
 			ThumbnailURL: builder.GetScreenshotURL(sceneModel.UpdatedAt.Timestamp),
 			VideoPreview: builder.GetStreamPreviewURL(),
 			VideoJsonURL: builder.GetDeoVRURL(false),
-		})
+		}
+		list = append(list, x)
 	}
 
 	library := SceneLibrary{
@@ -126,6 +150,15 @@ func getSingleSceneJSON(ctx context.Context, sceneModel *models.Scene) []byte {
 		Is3D:         true,
 		VideoPreview: builder.GetStreamPreviewURL(),
 		ThumbnailURL: builder.GetScreenshotURL(sceneModel.UpdatedAt.Timestamp),
+	}
+	if sceneModel.Interactive {
+		sceneStruct.IsScripted = true
+		sceneStruct.Fleshlight = []DeoFleshlight{
+			{
+				Title: "something.funscript",
+				URL:   builder.GetFunscriptURL(),
+			},
+		}
 	}
 
 	jsonBytes, err := json.Marshal(sceneStruct)

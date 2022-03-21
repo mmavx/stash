@@ -36,6 +36,7 @@ fragment SceneData on Scene {
     chapters_vtt
     sprite
     funscript
+    deovr
     interactive_heatmap
   }
 

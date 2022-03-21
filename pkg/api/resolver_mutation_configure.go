@@ -296,6 +296,8 @@ func (r *mutationResolver) ConfigureInterface(ctx context.Context, input models.
 
 	setBool(config.NotificationsEnabled, input.NotificationsEnabled)
 
+	setBool(config.ShowScrubber, input.ShowScrubber)
+
 	if input.WallPlayback != nil {
 		c.Set(config.WallPlayback, *input.WallPlayback)
 	}
@@ -304,6 +306,7 @@ func (r *mutationResolver) ConfigureInterface(ctx context.Context, input models.
 		c.Set(config.MaximumLoopDuration, *input.MaximumLoopDuration)
 	}
 
+	setBool(config.ShowSceneDeoVRButton, input.ShowSceneDeoVRButton)
 	setBool(config.AutostartVideo, input.AutostartVideo)
 	setBool(config.ShowStudioAsText, input.ShowStudioAsText)
 	setBool(config.AutostartVideoOnPlaySelected, input.AutostartVideoOnPlaySelected)

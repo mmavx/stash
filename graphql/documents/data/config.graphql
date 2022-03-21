@@ -51,9 +51,11 @@ fragment ConfigInterfaceData on ConfigInterfaceResult {
   soundOnPreview
   wallShowTitle
   wallPlayback
+  showScrubber
   maximumLoopDuration
   noBrowser
   notificationsEnabled
+  showSceneDeoVRButton
   autostartVideo
   autostartVideoOnPlaySelected
   continuePlaylistDefault

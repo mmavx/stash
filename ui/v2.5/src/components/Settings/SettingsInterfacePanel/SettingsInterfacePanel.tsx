@@ -150,6 +150,18 @@ export const SettingsInterfacePanel: React.FC = () => {
 
       <SettingSection headingID="config.ui.scene_player.heading">
         <BooleanSetting
+          id="show-scrubber"
+          headingID="config.ui.scene_player.options.show_scrubber"
+          checked={iface.showScrubber ?? undefined}
+          onChange={(v) => saveInterface({ showScrubber: v })}
+        />
+        <BooleanSetting
+          id="show-deovr-on-scenes"
+          headingID="config.ui.scene_player.options.show_deovr_button"
+          checked={iface.showSceneDeoVRButton ?? undefined}
+          onChange={(v) => saveInterface({ showSceneDeoVRButton: v })}
+        />
+        <BooleanSetting
           id="auto-start-video"
           headingID="config.ui.scene_player.options.auto_start_video"
           checked={iface.autostartVideo ?? undefined}

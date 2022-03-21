@@ -1,6 +1,6 @@
 import { Tab, Nav, Dropdown, Button, ButtonGroup } from "react-bootstrap";
 import queryString from "query-string";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useContext } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useParams, useLocation, useHistory, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -39,6 +39,8 @@ import { DeleteScenesDialog } from "../DeleteScenesDialog";
 import { GenerateDialog } from "../../Dialogs/GenerateDialog";
 import { SceneVideoFilterPanel } from "./SceneVideoFilterPanel";
 import { OrganizedButton } from "./OrganizedButton";
+import { ConfigurationContext } from "src/hooks/Config";
+import { VRButton } from "./VRButton";
 
 interface IProps {
   scene: GQL.SceneDataFragment;
@@ -54,11 +56,14 @@ const ScenePage: React.FC<IProps> = ({ scene, refetch }) => {
   const [generateScreenshot] = useSceneGenerateScreenshot();
   const [timestamp, setTimestamp] = useState<number>(getInitialTimestamp());
   const [collapsed, setCollapsed] = useState(false);
-  const [showScrubber, setShowScrubber] = useState(true);
 
-  const { data } = GQL.useConfigurationQuery();
+  const { configuration } = useContext(ConfigurationContext);
+
+  const [showScrubber, setShowScrubber] = useState(
+    configuration?.interface.showScrubber ?? true
+  );
   const [showDraftModal, setShowDraftModal] = useState(false);
-  const boxes = data?.configuration?.general?.stashBoxes ?? [];
+  const boxes = configuration?.general?.stashBoxes ?? [];
 
   const {
     data: sceneStreams,
@@ -66,7 +71,6 @@ const ScenePage: React.FC<IProps> = ({ scene, refetch }) => {
     loading: streamableLoading,
   } = useSceneStreams(scene.id);
 
-  const [oLoading, setOLoading] = useState(false);
   const [incrementO] = useSceneIncrementO(scene.id);
   const [decrementO] = useSceneDecrementO(scene.id);
   const [resetO] = useSceneResetO(scene.id);
@@ -168,34 +172,25 @@ const ScenePage: React.FC<IProps> = ({ scene, refetch }) => {
 
   const onIncrementClick = async () => {
     try {
-      setOLoading(true);
       await incrementO();
     } catch (e) {
       Toast.error(e);
-    } finally {
-      setOLoading(false);
     }
   };
 
   const onDecrementClick = async () => {
     try {
-      setOLoading(true);
       await decrementO();
     } catch (e) {
       Toast.error(e);
-    } finally {
-      setOLoading(false);
     }
   };
 
   const onResetClick = async () => {
     try {
-      setOLoading(true);
       await resetO();
     } catch (e) {
       Toast.error(e);
-    } finally {
-      setOLoading(false);
     }
   };
 
@@ -480,8 +475,10 @@ const ScenePage: React.FC<IProps> = ({ scene, refetch }) => {
               <ExternalPlayerButton scene={scene} />
             </Nav.Item>
             <Nav.Item className="ml-auto">
+              <VRButton scene={scene} />
+            </Nav.Item>
+            <Nav.Item className="ml-auto">
               <OCounterButton
-                loading={oLoading}
                 value={scene.o_counter || 0}
                 onIncrement={onIncrementClick}
                 onDecrement={onDecrementClick}

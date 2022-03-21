@@ -207,9 +207,14 @@ input ConfigInterfaceInput {
   wallShowTitle: Boolean
   """Wall playback type"""
   wallPlayback: String
+
+  """Show scene scrubber by default"""
+  showScrubber: Boolean
   
   """Maximum duration (in seconds) in which a scene video will loop in the scene player"""
   maximumLoopDuration: Int
+  """If true, and HTTPS is enabled, will show a deovr link in the scene player."""
+  showSceneDeoVRButton: Boolean
   """If true, video will autostart on load in the scene player"""
   autostartVideo: Boolean
   """If true, video will autostart when loading from play random or play selected"""
@@ -261,12 +266,17 @@ type ConfigInterfaceResult {
   """Wall playback type"""
   wallPlayback: String
 
+  """Show scene scrubber by default"""
+  showScrubber: Boolean
+
   """Maximum duration (in seconds) in which a scene video will loop in the scene player"""
   maximumLoopDuration: Int
   """True if we should not auto-open a browser window on startup"""
   noBrowser: Boolean
   """True if we should send desktop notifications"""
   notificationsEnabled: Boolean
+  """If true, and HTTPS is enabled, will show a deovr link in the scene player."""
+  showSceneDeoVRButton: Boolean
   """If true, video will autostart on load in the scene player"""
   autostartVideo: Boolean
   """If true, video will autostart when loading from play random or play selected"""
